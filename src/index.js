@@ -1,37 +1,72 @@
 import './pages/index.css';
-console.log('Hello, World!');
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector("#card-template").content;    //в переменную cardTemplate записали содержимое шаблона
+import { addCard, removeCard, likeCard, openImage } from './components/cards';
+import { openModal, closeModal, addListeners } from './components/modal';
+import { initialCards } from './scripts/cards';
 
 // @todo: DOM узлы
-const cardList = document.querySelector(".places__list");                 //это куда будем вставлять карточки
+const cardList = document.querySelector(".places__list");
+const popupImageContainer = document.querySelector('.popup_type_image');
+const popupImage = popupImageContainer.querySelector('.popup__image');
+const popupProfileEdit = document.querySelector('.popup_type_edit');
+const popupCardAdd = document.querySelector('.popup_type_new-card');
 
-// @todo: Функция создания карточки
-const addCard = function (element, removeCardCallback) {                  //функция принимает элемент (объект) из массива объектов исходных данных карточек
-  const card = cardTemplate.querySelector(".card").cloneNode(true);       //клонируем шаблон карточки, помещаем его в переменную card, далее будем наполнять
-  const cardImage = card.querySelector(".card__image");                   //выбираем внутри спарсенного шаблона карточки изображение
-  cardImage.src = element.link;                                           //выбираем ключ 'link' у объекта из массива исходных карточек и присваиваем его атрибуту 'src' у выбранного ранее изображения
-  cardImage.alt = element.name;                                           //выбираем ключ 'name' у объекта из массива исходных карточек и присваиваем его атрибуту 'alt' у выбранного ранее изображения (иного описания изображения нам не дано)
-  const cardTitle = card.querySelector(".card__title");                   //выбираем заголовок внутри спарсенного шаблона карточки
-  cardTitle.textContent = element.name;                                   //выбираем ключ 'name' у объекта из массива исходных карточек и присваиваем его атрибуту 'src' у выбранного ранее изображения
-  const removeButton = card.querySelector(".card__delete-button");        //выбираем кнопку внутри спарсенного шаблона карточки и записываем ее как объект в переменную removeButton
-  removeButton.addEventListener("click", () => removeCardCallback(card)); //вешаем на кнопку слушатель событий, который по клику запускает функцию удаления карточки
-  return card;                                                            //функция возвращает наполненную карточку
-};
+const cards = document.querySelector('.places__list');
 
-// @todo: Функция удаления карточки
-const removeCard = function (card) {                                      //функция удаления карточки принимает карточку в качестве аргумента
-  card.remove();                                                          //удаляем карточку
-};
+const editButton = document.querySelector('.profile__edit-button');
+const addButton = document.querySelector('.profile__add-button');
+
+const cardFormElement = document.forms['new-place'];
+const cardName = cardFormElement.elements['place-name'];
+const cardLink = cardFormElement.elements.link;
+
+const profileFormElement = document.forms['edit-profile'];
+const nameInput = profileFormElement.elements.name;
+const jobInput = profileFormElement.elements.description;
 
 // @todo: Вывести карточки на страницу
-initialCards.forEach((element) => {                                       //цикл идет по массиву initialCards, на каждой итерации берет объект element из этого массива
-  const card = addCard(element, removeCard);                              //вызываем функцию addCard и передаем ей объект element из массива исходных карточек и колбек удаления карточек и присваиваем результат ее выполнения переменной card
-  cardList.append(card);                                                  //добавляем в конец cardList полученную card
+initialCards.forEach((cardData) => {                                       
+  const card = addCard(cardData, removeCard, likeCard, openImage);                              
+  cardList.append(card);                                                  
 });
-const numbers = [2, 3, 5];
 
-// Стрелочная функция. Не запнётся ли на ней Internet Explorer?
-const doubledNumbers = numbers.map(number => number * 2);
+function cardFormSubmit(evt) {
+  evt.preventDefault();
+  const newData = {
+    name: cardName.value,
+    link: cardLink.value
+  };
+  cards.prepend(addCard(newData, removeCard, likeCard, openImage));
+  // popupCardAdd.classList.remove('popup_is-opened');
+  cardFormElement.reset();
+  closeModal(popupCardAdd);
+}
 
-console.log(doubledNumbers); // 4, 6, 10
+cardFormElement.addEventListener('submit', cardFormSubmit);
+
+function profileFormSubmit(evt) {
+  evt.preventDefault();
+  const name = nameInput.value;
+  const job = jobInput.value;
+  const profileTitle = document.querySelector('.profile__title');
+  profileTitle.textContent = name;
+  const profileDescription = document.querySelector('.profile__description');
+  profileDescription.textContent = job;
+  closeModal(popupProfileEdit);
+}
+
+profileFormElement.addEventListener('submit', profileFormSubmit);
+
+editButton.addEventListener('click', () => {
+      openModal(popupProfileEdit);
+  });
+addButton.addEventListener('click', () => {
+      openModal(popupCardAdd);
+  });
+  
+cards.addEventListener('click', () => {
+      openModal(popupImage);
+  });
+
+addListeners(popupProfileEdit);
+addListeners(popupCardAdd);
+addListeners(popupImageContainer);
