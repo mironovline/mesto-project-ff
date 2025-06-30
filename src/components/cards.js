@@ -18,7 +18,9 @@ export const createCard = function (
 
   removeButton.addEventListener("click", () => removeCardCallback(card));
   buttonLike.addEventListener("click", likeCardCallback);
-  cardImage.addEventListener("click", () => openImageCallback(element.link, element.name));
+  cardImage.addEventListener("click", () =>
+    openImageCallback(element.link, element.name)
+  );
   return card;
 };
 

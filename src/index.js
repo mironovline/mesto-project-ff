@@ -30,12 +30,12 @@ initialCards.forEach((cardData) => {
   cardList.append(card);
 });
 
-function openImage (imgSrc, imgAlt) {
+function openImage(imgSrc, imgAlt) {
   popupImage.src = imgSrc;
   popupImage.alt = imgAlt;
   popupCaption.textContent = imgAlt;
   openModal(popupImageContainer);
-};
+}
 
 function cardFormSubmit(evt) {
   evt.preventDefault();
