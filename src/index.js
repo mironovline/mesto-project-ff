@@ -2,6 +2,7 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
 import { initialCards } from "./scripts/cards";
+import { enableValidation, configValidation } from "./components/validation";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -75,3 +76,4 @@ addButton.addEventListener("click", () => {
 addListeners(popupProfileEdit);
 addListeners(popupCardAdd);
 addListeners(popupImageContainer);
+enableValidation(configValidation);
