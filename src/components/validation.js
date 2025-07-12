@@ -54,7 +54,7 @@ export const enableValidation = function (configValidation) {
   });
 };
 
-function clearValidation(formElement, configValidation) {
+export function clearValidation(formElement, configValidation) {
   const inputList = Array.from(formElement.querySelectorAll(configValidation.inputSelector));
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, configValidation);

@@ -2,7 +2,7 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
 import { initialCards } from "./scripts/cards";
-import { enableValidation, configValidation } from "./components/validation";
+import { enableValidation, clearValidation, configValidation } from "./components/validation";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -68,9 +68,12 @@ editButton.addEventListener("click", () => {
   openModal(popupProfileEdit);
   nameInput.value = document.querySelector(".profile__title").textContent;
   jobInput.value = document.querySelector(".profile__description").textContent;
+  clearValidation(popupProfileEdit, configValidation);
+  //profileFormElement.reset();
 });
 addButton.addEventListener("click", () => {
   openModal(popupCardAdd);
+  //cardFormElement.reset();
 });
 
 addListeners(popupProfileEdit);
