@@ -2,7 +2,8 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
 import { initialCards } from "./scripts/cards";
-import { enableValidation, clearValidation, configValidation } from "./components/validation";
+import { enableValidation, clearValidation, validationConfig } from "./components/validation";
+import { getCard, postCard, getProfile, patchProfile } from "./components/api";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -24,6 +25,7 @@ const cardLink = cardFormElement.elements.link;
 const profileFormElement = document.forms["edit-profile"];
 const nameInput = profileFormElement.elements.name;
 const jobInput = profileFormElement.elements.description;
+
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((cardData) => {
@@ -59,24 +61,47 @@ function profileFormSubmit(evt) {
   profileTitle.textContent = name;
   const profileDescription = document.querySelector(".profile__description");
   profileDescription.textContent = job;
+  // patchProfile(name, job)
+  // .then((result) => {
+  // console.log(result);
+  // profileTitle.textContent = result.name;
+  // profileDescription.textContent = result.about;
+  // closeModal(popupProfileEdit);
+  // })
   closeModal(popupProfileEdit);
 }
 
 profileFormElement.addEventListener("submit", profileFormSubmit);
 
 editButton.addEventListener("click", () => {
+  clearValidation(popupProfileEdit, validationConfig);
+  profileFormElement.reset();
   openModal(popupProfileEdit);
   nameInput.value = document.querySelector(".profile__title").textContent;
   jobInput.value = document.querySelector(".profile__description").textContent;
-  clearValidation(popupProfileEdit, configValidation);
-  //profileFormElement.reset();
 });
 addButton.addEventListener("click", () => {
+  clearValidation(popupCardAdd, validationConfig);
+  cardFormElement.reset();
   openModal(popupCardAdd);
-  //cardFormElement.reset();
 });
 
 addListeners(popupProfileEdit);
 addListeners(popupCardAdd);
 addListeners(popupImageContainer);
-enableValidation(configValidation);
+enableValidation(validationConfig);
+
+getCard()
+.then((result) => {
+     result.forEach(element => {
+       const card = createCard(element, removeCard, likeCard, openImage);
+       cardList.append(card);
+       });
+    });
+
+getProfile()
+.then((result) => {
+  console.log(result);
+  // profileTitle.textContent = result.name;
+  // profileDescription.textContent = result.about;
+})

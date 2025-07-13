@@ -12,7 +12,6 @@ const handleEscKeyUp = (evt) => {
 
 export const closeModal = function (m) {
   m.classList.remove("popup_is-opened");
-
   document.removeEventListener("keyup", handleEscKeyUp);
 };
 
