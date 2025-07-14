@@ -61,14 +61,13 @@ function profileFormSubmit(evt) {
   profileTitle.textContent = name;
   const profileDescription = document.querySelector(".profile__description");
   profileDescription.textContent = job;
-  // patchProfile(name, job)
-  // .then((result) => {
-  // console.log(result);
-  // profileTitle.textContent = result.name;
-  // profileDescription.textContent = result.about;
-  // closeModal(popupProfileEdit);
-  // })
+  patchProfile(name, job)
+  .then((result) => {
+  console.log(result);
+  profileTitle.textContent = result.name;
+  profileDescription.textContent = result.about;
   closeModal(popupProfileEdit);
+  })
 }
 
 profileFormElement.addEventListener("submit", profileFormSubmit);

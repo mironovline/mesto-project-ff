@@ -30,21 +30,24 @@ export const getProfile = () => {
   })
 };
 
-// export const patchProfile = (nameUser, aboutUser) => {
-//   return fetch('https://nomoreparties.co/v1/wff-cohort-42/users/me', {
-//     method: 'PATCH',
-//     header: {
-//       authorization: '2f1d2ec8-7302-4076-abbc-c533d5817ed0'
-//     },
-//     body: JSON.stringify({
-//       name: nameUser,
-//       about: aboutUser
-//     })
-//   })
-//   .then((response) => {
-//     return response.json();
-//   })
-// }
+export const patchProfile = (nameUser, aboutUser) => {
+  return fetch('https://nomoreparties.co/v1/wff-cohort-42/users/me', {
+    method: 'PATCH',
+    headers: {
+      authorization: token
+    },
+    body: JSON.stringify({
+      name: nameUser,
+      about: aboutUser
+    })
+  })
+  .then((response) => {
+    return response.json();
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+}
 
 
 
