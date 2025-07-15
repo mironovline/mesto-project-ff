@@ -88,8 +88,6 @@
           name="link" 
           class="popup__input popup__input_type_url" 
           placeholder="Ссылка на картинку"
-          pattern="^(https?:\/\/|\.\.?\/|\/)?[\w\-.\/]+\.(jpe?g|png|gif|webp|svg)(\?[\w\-=&%]*)?$"
-          data-error-message="Неправильный формат ссылки." 
           required>
           <span class="link-input-error form__input-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
@@ -111,7 +109,10 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
+      <div class="card__likes-container">
       <button type="button" class="card__like-button"></button>
+      <p class="card__likes-count"></p>
+      </div>
     </div>
   </li>
 </template>

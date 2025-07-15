@@ -1,9 +1,9 @@
 import "./pages/index.css";
-import { createCard, removeCard, likeCard } from "./components/cards";
+import { createCard, removeCard } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
-import { initialCards } from "./scripts/cards";
+// import { initialCards } from "./scripts/cards";
 import { enableValidation, clearValidation, validationConfig } from "./components/validation";
-import { getCard, postCard, getProfile, patchProfile } from "./components/api";
+import { getCard, postCard, deleteCard, getProfile, patchProfile, toggleLikePromise } from "./components/api";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -26,12 +26,15 @@ const profileFormElement = document.forms["edit-profile"];
 const nameInput = profileFormElement.elements.name;
 const jobInput = profileFormElement.elements.description;
 
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+const profileAvatar = document.querySelector(".profile__image");
 
 // @todo: Вывести карточки на страницу
-initialCards.forEach((cardData) => {
-  const card = createCard(cardData, removeCard, likeCard, openImage);
-  cardList.append(card);
-});
+// initialCards.forEach((cardData) => {
+//   const card = createCard(cardData, removeCard, likeCard, openImage);
+//   cardList.append(card);
+// });
 
 function openImage(imgSrc, imgAlt) {
   popupImage.src = imgSrc;
@@ -40,12 +43,24 @@ function openImage(imgSrc, imgAlt) {
   openModal(popupImageContainer);
 }
 
+const likeCard = function (cardId, isLiked, renderLikes) {
+  toggleLikePromise(cardId, isLiked)
+  .then((likesArray) => {
+    renderLikes(likesArray);
+  })
+};
+
 function cardFormSubmit(evt) {
   evt.preventDefault();
   const newData = {
     name: cardName.value,
     link: cardLink.value,
   };
+  postCard(newData.name, newData.link)
+  .then((res) => {
+  newData.name = res.name,
+  newData.link = res.link
+  })
   cards.prepend(createCard(newData, removeCard, likeCard, openImage));
   cardFormElement.reset();
   closeModal(popupCardAdd);
@@ -63,7 +78,6 @@ function profileFormSubmit(evt) {
   profileDescription.textContent = job;
   patchProfile(name, job)
   .then((result) => {
-  console.log(result);
   profileTitle.textContent = result.name;
   profileDescription.textContent = result.about;
   closeModal(popupProfileEdit);
@@ -92,6 +106,7 @@ enableValidation(validationConfig);
 
 getCard()
 .then((result) => {
+    console.log(result);
      result.forEach(element => {
        const card = createCard(element, removeCard, likeCard, openImage);
        cardList.append(card);
@@ -100,7 +115,6 @@ getCard()
 
 getProfile()
 .then((result) => {
-  console.log(result);
-  // profileTitle.textContent = result.name;
-  // profileDescription.textContent = result.about;
+  profileTitle.textContent = result.name;
+  profileDescription.textContent = result.about;
 })
