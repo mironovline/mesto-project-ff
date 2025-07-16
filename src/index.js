@@ -30,6 +30,8 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
 
+let userId = null;
+
 // @todo: Вывести карточки на страницу
 // initialCards.forEach((cardData) => {
 //   const card = createCard(cardData, removeCard, likeCard, openImage);
@@ -107,8 +109,9 @@ enableValidation(validationConfig);
 getCard()
 .then((result) => {
     console.log(result);
+    userId = result._id;
      result.forEach(element => {
-       const card = createCard(element, removeCard, likeCard, openImage);
+       const card = createCard(element, userId, removeCard, likeCard, openImage);
        cardList.append(card);
        });
     });

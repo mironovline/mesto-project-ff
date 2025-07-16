@@ -1,5 +1,6 @@
 export const createCard = function (
   element,
+  userId,
   removeCardCallback,
   likeCardCallback,
   openImageCallback
@@ -18,10 +19,10 @@ export const createCard = function (
   cardImage.alt = element.name;
   cardTitle.textContent = element.name;
 
-   function renderLikes(element) {
-    const isLiked = element.map((user) => user._id).includes(userId);
-    buttonLike.classList.toggle(likeModifier, isLiked)
-    likesCount.textContent = element.likes.length; 
+   function renderLikes(likesArray) {
+    const isLiked = likesArray.likes.some((like) => like._id === userId);
+    buttonLike.classList.toggle(likeModifier, isLiked);
+    likesCount.textContent = likesArray.likes.length; 
   };
   buttonLike.addEventListener('click', () => likeCardCallback(element._id, buttonLike.classList.contains(likeModifier), renderLikes));
   removeButton.addEventListener("click", () => removeCardCallback(card));
