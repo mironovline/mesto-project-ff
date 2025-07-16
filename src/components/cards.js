@@ -8,7 +8,7 @@ export const createCard = function (
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".card").cloneNode(true);
   const buttonLike = card.querySelector(".card__like-button");
-  const likeModifier = ".card__like-button_is-active";
+  const likeModifier = "card__like-button_is-active"; 
 
   const cardImage = card.querySelector(".card__image");
   const cardTitle = card.querySelector(".card__title");
@@ -19,17 +19,21 @@ export const createCard = function (
   cardImage.alt = element.name;
   cardTitle.textContent = element.name;
 
-   function renderLikes(likesArray) {
-    const isLiked = likesArray.likes.some((like) => like._id === userId);
+  const renderLikes = (data, userId) => {
+    console.log(data);
+    const isLiked = data.likes.some((like) => like._id === userId);
     buttonLike.classList.toggle(likeModifier, isLiked);
-    likesCount.textContent = likesArray.likes.length; 
+    likesCount.textContent = data.likes.length; 
   };
-  buttonLike.addEventListener('click', () => likeCardCallback(element._id, buttonLike.classList.contains(likeModifier), renderLikes));
-  removeButton.addEventListener("click", () => removeCardCallback(card));
+
+  if (element.owner._id === userId) {
+    removeButton.addEventListener("click", () => removeCardCallback(element._id, card))
+  } else {
+    removeButton.remove();
+  }
+
+  buttonLike.addEventListener('click', () => likeCardCallback(element._id, userId, buttonLike.classList.contains(likeModifier), renderLikes));
   cardImage.addEventListener("click", () => openImageCallback(element.link, element.name));
   return card;
 };
 
-export const removeCard = function (card) {
-  card.remove();
-};

@@ -4,7 +4,7 @@ const config = {
     authorization: '2f1d2ec8-7302-4076-abbc-c533d5817ed0',
     'Content-Type': 'application/json'
   }
-}
+};
 
 function checkResponse(res) {
   if (res.ok) {
@@ -27,34 +27,12 @@ export const getCard = () => {
 .then(checkResponse)
 };
 
-export const getProfile = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: 'GET',
-    headers: config.headers
-  })
-  .then(checkResponse)
-  
-};
-
-export const patchProfile = (nameUser, aboutUser) => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      name: nameUser,
-      about: aboutUser
-    })
-  })
-  .then(checkResponse)
-};
-
-export const postCard = (cardName, cardLink) => {
+export const postCard = ({ name, link }) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: config.headers,
-    body: JSON.stringify({
-      name: cardName,
-      link: cardLink
+    body: JSON.stringify({ 
+      name, link 
     })
 })
   .then(checkResponse)
@@ -68,10 +46,40 @@ export const deleteCard = (cardId) => {
   .then(checkResponse)
 };
 
-export const toggleLikePromise = (cardId, isLiked) => {
+export const getProfile = () => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: 'GET',
+    headers: config.headers
+  })
+  .then(checkResponse)
+};
+
+export const patchProfile = ({ name, about }) => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      name, about
+    })
+  })
+  .then(checkResponse)
+};
+
+export const toggleLikePromise = ({ cardId, isLiked }) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: isLiked ? 'DELETE' : 'PUT',
     headers: config.headers,
   })
   .then(checkResponse)
-}
+};
+
+export const setUserAvatar = ({ avatar }) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar
+    })
+  })
+  .then(checkResponse)
+};

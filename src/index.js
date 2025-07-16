@@ -1,9 +1,9 @@
 import "./pages/index.css";
-import { createCard, removeCard } from "./components/cards";
+import { createCard } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
 // import { initialCards } from "./scripts/cards";
 import { enableValidation, clearValidation, validationConfig } from "./components/validation";
-import { getCard, postCard, deleteCard, getProfile, patchProfile, toggleLikePromise } from "./components/api";
+import { getCard, postCard, deleteCard, getProfile, patchProfile, setUserAvatar, toggleLikePromise } from "./components/api";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -30,6 +30,7 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
 
+
 let userId = null;
 
 // @todo: Вывести карточки на страницу
@@ -45,11 +46,14 @@ function openImage(imgSrc, imgAlt) {
   openModal(popupImageContainer);
 }
 
-const likeCard = function (cardId, isLiked, renderLikes) {
+const likeCard = function (cardId, userId, isLiked, renderLikes) {
   toggleLikePromise(cardId, isLiked)
-  .then((likesArray) => {
-    renderLikes(likesArray);
+  .then((data) => {
+    renderLikes(data, userId);
   })
+};
+const removeCard = function (cardId, card) {
+  card.remove();
 };
 
 function cardFormSubmit(evt) {
@@ -110,8 +114,8 @@ getCard()
 .then((result) => {
     console.log(result);
     userId = result._id;
-     result.forEach(element => {
-       const card = createCard(element, userId, removeCard, likeCard, openImage);
+     result.forEach(data => {
+       const card = createCard(data, userId, removeCard, likeCard, openImage);
        cardList.append(card);
        });
     });
@@ -120,4 +124,9 @@ getProfile()
 .then((result) => {
   profileTitle.textContent = result.name;
   profileDescription.textContent = result.about;
+})
+
+setUserAvatar()
+.then((result) => {
+  profileAvatar.style.backgroundImage = `url(${result.avatar})`;
 })
