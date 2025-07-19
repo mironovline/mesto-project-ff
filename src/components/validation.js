@@ -1,12 +1,3 @@
-export const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
-
 const showInputError = (
   formElement,
   inputElement,
@@ -76,6 +67,7 @@ export const clearValidation = function (formElement, validationConfig) {
   );
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationConfig);
+    inputElement.setCustomValidity("");
   });
 };
 

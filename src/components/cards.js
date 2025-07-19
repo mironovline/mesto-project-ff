@@ -36,5 +36,20 @@ export const createCard = function (
   cardImage.addEventListener("click", () =>
     openImageCallback(cardData.link, cardData.name)
   );
+
+  likesCount.textContent = cardData.likes.length;
   return card;
 };
+
+export const handleLikeIconClick =
+  (toggleLikePromise) => (cardID, buttonLike, likesCount) => {
+    const isLiked = buttonLike.classList.contains(
+      "card__like-button_is-active"
+    ); // определяем окрашена ли уже карточка
+    toggleLikePromise(cardID, isLiked)
+      .then((cardData) => {
+        buttonLike.classList.toggle("card__like-button_is-active");
+        likesCount.textContent = cardData.likes.length;
+      })
+      .catch((err) => console.log(`Ошибка изменения статуса лайка: ${err}`));
+  };

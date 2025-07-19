@@ -1,11 +1,7 @@
 import "./pages/index.css";
-import { createCard } from "./components/cards";
+import { createCard, handleLikeIconClick } from "./components/cards";
 import { openModal, closeModal, addListeners } from "./components/modal";
-import {
-  enableValidation,
-  clearValidation,
-  validationConfig,
-} from "./components/validation";
+import { enableValidation, clearValidation } from "./components/validation";
 import {
   getCard,
   postCard,
@@ -43,10 +39,20 @@ const cardLink = cardFormElement.elements.link;
 const profileFormElement = document.forms["edit-profile"];
 const nameInput = profileFormElement.elements.name;
 const jobInput = profileFormElement.elements.description;
+const profileButtonSave = profileFormElement.querySelector(".popup__button");
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileImage = document.querySelector(".profile__image");
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
 let userId = null;
 let cardForDelete = {};
@@ -122,17 +128,23 @@ cardFormElement.addEventListener("submit", cardFormSubmit);
 
 const profileFormSubmit = function (evt) {
   evt.preventDefault();
+  renderLoading(true, profileButtonSave);
   const name = nameInput.value;
   const job = jobInput.value;
   const profileTitle = document.querySelector(".profile__title");
   profileTitle.textContent = name;
   const profileDescription = document.querySelector(".profile__description");
   profileDescription.textContent = job;
-  patchProfile(name, job).then((result) => {
-    profileTitle.textContent = result.name;
-    profileDescription.textContent = result.about;
-    closeModal(popupProfileEdit);
-  });
+  patchProfile(name, job)
+    .then((result) => {
+      profileTitle.textContent = result.name;
+      profileDescription.textContent = result.about;
+      closeModal(popupProfileEdit);
+    })
+    .catch((err) =>
+      console.log(`Ошибка изменения профиля пользователя: ${err}`)
+    )
+    .finally(() => renderLoading(false, profileButtonSave));
 };
 
 profileFormElement.addEventListener("submit", profileFormSubmit);
@@ -164,12 +176,16 @@ editButton.addEventListener("click", () => {
 
 addButton.addEventListener("click", () => {
   clearValidation(popupCardAdd, validationConfig);
+  cardFormButton.disabled = true;
+  cardFormButton.classList.add(validationConfig.inactiveButtonClass);
   cardFormElement.reset();
   openModal(popupCardAdd);
 });
 
 profileImage.addEventListener("click", () => {
   clearValidation(popupTypeAvatar, validationConfig);
+  avatarSaveButton.disabled = true;
+  avatarSaveButton.classList.add(validationConfig.inactiveButtonClass);
   avatarForm.reset();
   openModal(popupTypeAvatar);
 });
@@ -180,19 +196,6 @@ addListeners(popupImageContainer);
 addListeners(popupTypeDelete);
 addListeners(popupTypeAvatar);
 enableValidation(validationConfig);
-
-const handleLikeIconClick =
-  (toggleLikePromise) => (cardID, buttonLike, likesCount) => {
-    const isLiked = buttonLike.classList.contains(
-      "card__like-button_is-active"
-    ); // определяем окрашена ли уже карточка
-    toggleLikePromise(cardID, isLiked)
-      .then((cardData) => {
-        buttonLike.classList.toggle("card__like-button_is-active");
-        likesCount.textContent = cardData.likes.length;
-      })
-      .catch((err) => console.log(`Ошибка изменения статуса лайка: ${err}`));
-  };
 
 const onLikeClick = handleLikeIconClick(toggleLikePromise);
 
@@ -211,8 +214,6 @@ Promise.all([getProfile(), getCard()])
         openImage
       );
       cardList.append(card);
-      const likesCount = card.querySelector(".card__likes-count");
-      likesCount.textContent = data.likes.length;
     });
   })
   .catch((err) => {
